@@ -4,15 +4,22 @@ from torch.utils.data import Dataset
 from torchvision import transforms
 
 
+# 预处理过程
 preprocess = transforms.Compose([
+    # 转换为张量
     transforms.ToTensor(),
+    # 归一化
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
 
 def parse_label(file_path):
+    '''
+    解析标注文件
+    '''
     with open(file_path, 'r') as fr:
         class_indexes = []
         centers = []
+        # 逐行读入
         for l in fr.readlines():
             es = l.split(' ')
             class_indexes.append(ord(es[0]) - 48)
@@ -46,10 +53,12 @@ class CaptchaDataset(Dataset):
         image = self.augment(image)
 
         label_path = file_path.replace('images', 'labels').replace('png', 'txt')
-        label = self.create_label(*parse_label(label_path)) if self.training else get_label_text(label_path)
+        label = self.create_label(*parse_label(label_path))\
+            if self.training else get_label_text(label_path)
         return image, label
 
     def create_label(self, cls_indexes, centers):
+        '''生成标签'''
         h, w = 5, 10
         label = np.zeros((h, w, 2 + self.num_classes), dtype=np.float32)
         for ci, center in zip(cls_indexes, centers):

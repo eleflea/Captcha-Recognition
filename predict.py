@@ -9,18 +9,32 @@ from net import Net
 
 
 def nms(preds, threshold=12):
+    '''
+    对一个预测结果进行非极大值抑制
+    threshold是阈值
+    '''
+    # 按置信度降序排序，获得排序索引
     orders = torch.sort(preds[:, -1], descending=True)[1]
+    # 最终保留的预测结果
     keep = []
     while orders.numel() > 0 and len(keep) < 4:
+        # 取出当前最高的
         i = orders[0].item()
         keep.append(i)
+        # 除此之外剩余的
         orders = orders[1:]
+        # 最高的结果的坐标
         xcyc = preds[i, :2]
+        # 其余结果的坐标
         others = preds[orders, :2]
+        # 计算之间的距离
         distance = (xcyc - others).pow(2).sum(-1).sqrt()
+        # 距离大于阈值的掩码
         mask = distance > threshold
+        # 仅保留大于阈值的结果
         orders = orders[mask]
     results = preds[keep, :]
+    # 将结果按x坐标升序排列
     results = results[results[:, 0].sort()[1]]
     return results
 
@@ -39,10 +53,14 @@ def convert_text(result):
     return [''.join(map(lambda x: chr(48+x), asciis)) for asciis in batch_asciis]
 
 def pred_to_text(pred):
+    '''将CNN的输出转换为字符串'''
     return convert_text(parse_pred(pred))
 
 @torch.no_grad()
 def predict(model, img_path):
+    '''
+    预测一张图片
+    '''
     image = Image.open(img_path)
     image = preprocess(image).unsqueeze(0)
     pred = model(image)
@@ -50,6 +68,9 @@ def predict(model, img_path):
 
 @torch.no_grad()
 def draw_detail(model, img_path, save_path):
+    '''
+    画图
+    '''
     image = Image.open(img_path)
     inputs = preprocess(image).unsqueeze(0)
     model.eval()
@@ -78,6 +99,7 @@ if __name__ == "__main__":
     parser.add_argument('--detail', default='', help='show detail in output image')
     args = parser.parse_args()
     model = Net(10)
+    # 载入训练好的权重
     model.load_state_dict(torch.load(args.weight, map_location='cpu'))
     model.eval()
     if args.detail:
