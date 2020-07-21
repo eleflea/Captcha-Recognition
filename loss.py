@@ -11,11 +11,6 @@ def smooth_l1_loss(pred, label, beta=1/9):
     loss = torch.where(cond, 0.5 * n ** 2 / beta, n - 0.5 * beta)
     return loss.mean(dim=-1)
 
-def focal_loss(pred, label, alpha=0.5, gamma=2):
-    alpha_t = 2 * torch.abs(label - 1 + alpha)
-    focal = alpha_t * torch.pow(torch.abs(label - pred), gamma)
-    return focal
-
 bce_loss = nn.BCELoss(reduction='none')
 
 def criterion(pred, label):
