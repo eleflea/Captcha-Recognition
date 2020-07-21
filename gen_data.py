@@ -1,3 +1,4 @@
+import argparse
 import os
 import random
 import string
@@ -62,4 +63,7 @@ def produce_dataset(N=1000):
 if __name__ == "__main__":
     os.makedirs(IMAGE_PATH, exist_ok=True)
     os.makedirs(LABEL_PATH, exist_ok=True)
-    produce_dataset(5000)
+    parser = argparse.ArgumentParser(description='generate train/val data')
+    parser.add_argument('--n', type=int, help='number of images', default=5000)
+    args = parser.parse_args()
+    produce_dataset(args.n)

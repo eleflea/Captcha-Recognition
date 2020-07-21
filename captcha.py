@@ -196,7 +196,7 @@ class ImageCaptcha(_Captcha):
 
         # draw = Draw(image)
         # for box in char_boxes:
-        #     draw.rectangle(box, width=1, outline=(0, 0, 0))
+        #     draw.rectangle(box, width=1, outline=(255, 0, 0))
 
         return image, char_boxes
 
@@ -205,7 +205,7 @@ class ImageCaptcha(_Captcha):
 
         :param chars: text to be generated.
         """
-        background = random_color(238, 255)
+        background = random_color(220, 255)
         color = random_color(10, 200, random.randint(220, 255))
         im, boxes = self.create_captcha_image(chars, color, background)
         self.create_noise_dots(im, color)
