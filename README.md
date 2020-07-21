@@ -17,7 +17,7 @@ Python>=3.5, PyTorch>1.0大概就没问题。
 ### 数据生成
 
 ```
-python gen_data.py
+python gen_data.py --n 5000
 ```
 
 生成的数据是4位数字，图片大小是80x160。存放于`dataset/images`（图片）和`dataset/labels`（标签）。80%数据用于训练，20%用于验证。

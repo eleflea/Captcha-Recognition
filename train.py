@@ -18,7 +18,7 @@ EVAL_TXT_FILE = 'dataset/val.txt'
 NUM_CLASSES = 10
 
 PRINT_INTERVAL = 50
-DEVICE = 'cuda'
+DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 def train_epoch(epoch):
     max_step = len(train_dataloader)
